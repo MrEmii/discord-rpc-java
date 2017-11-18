@@ -1,4 +1,4 @@
-package fr.slaynash.discordrpc_test;
+package exemple;
 
 import java.util.Scanner;
 
