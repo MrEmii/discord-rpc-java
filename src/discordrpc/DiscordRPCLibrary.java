@@ -11,7 +11,7 @@ public interface DiscordRPCLibrary extends Library {
 	public static final int DISCORD_REPLY_YES = 1;
 	public static final int DISCORD_REPLY_IGNORE = 2;
 	
-	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(DiscordRPCLibrary.JNA_LIBRARY_NAME);
+	public static final NativeLibrary JNA_NATIVE_LIB = loadLibrary();
 	public static final DiscordRPCLibrary INSTANCE = (DiscordRPCLibrary)Native.loadLibrary(DiscordRPCLibrary.JNA_LIBRARY_NAME, DiscordRPCLibrary.class);
 	
 	
@@ -39,5 +39,18 @@ public interface DiscordRPCLibrary extends Library {
 	}
 	public static void respond(String userid, int reply) {
 		INSTANCE.Discord_Respond(userid, reply);
+	}
+	
+	public static NativeLibrary loadLibrary() {
+		if(System.getProperty("os.name").toLowerCase().equals("mac"))
+			NativeLibrary.addSearchPath(DiscordRPCLibrary.JNA_LIBRARY_NAME, "/natives/darwin_universal");
+		else if(System.getProperty("os.name").toLowerCase().contains("nux"))
+			NativeLibrary.addSearchPath(DiscordRPCLibrary.JNA_LIBRARY_NAME, "/natives/linux_x64");
+		else if(System.getenv("ProgramFiles(x86)") != null)
+			NativeLibrary.addSearchPath(DiscordRPCLibrary.JNA_LIBRARY_NAME, "/natives/win64");
+		else
+			NativeLibrary.addSearchPath(DiscordRPCLibrary.JNA_LIBRARY_NAME, "/natives/win32");
+		
+		return NativeLibrary.getInstance(DiscordRPCLibrary.JNA_LIBRARY_NAME);
 	}
 }
